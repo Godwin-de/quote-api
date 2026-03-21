@@ -1,7 +1,7 @@
 import fetch from "node-fetch";
 
 export default async function handler(req, res) {
-  const GEMINI_KEY = process.env.GEMINI_KEY; // Read from Vercel environment
+  const GEMINI_KEY = AIzaSyA35mjsTZud4cec5bNd87HCrfB6AU26FzM; // Read from Vercel environment
 
   try {
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_KEY}`;
