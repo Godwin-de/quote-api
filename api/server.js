@@ -7,7 +7,7 @@ const GEMINI_KEY = process.env.GEMINI_KEY;
 
 app.get("/quote", async (req, res) => {
   try {
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_KEY}`;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_KEY}`;
     const body = {
       contents: [{ parts: [{ text: "Generate a short inspirational quote." }] }]
     };
@@ -17,15 +17,9 @@ app.get("/quote", async (req, res) => {
       body: JSON.stringify(body)
     });
     const data = await response.json();
-
-    // ← Add this to see the full Gemini response in Railway logs
-    console.log("Gemini response:", JSON.stringify(data, null, 2));
-
-    const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-    console.log("Raw quote text:", rawText); // ← see exactly what Gemini returns
-
-    const quoteText = rawText?.replace(/^["*_]+|["*_]+$/g, "").trim();
-
+    const quoteText = data?.candidates?.[0]?.content?.parts?.[0]?.text
+      ?.replace(/^["*_]+|["*_]+$/g, "")
+      .trim();
     if (!quoteText) throw new Error("No quote found");
     res.json({ quote: quoteText });
   } catch (error) {
