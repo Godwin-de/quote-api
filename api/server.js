@@ -19,7 +19,10 @@ app.get("/quote", async (req, res) => {
       body: JSON.stringify(body)
     });
     const data = await response.json();
-    const quoteText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+    // const quoteText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+    const quoteText = data?.candidates?.[0]?.content?.parts?.[0]?.text
+      ?.replace(/^["*_]+|["*_]+$/g, "")  // removes surrounding quotes, asterisks
+      .trim();
     if (!quoteText) throw new Error("No quote found");
     res.json({ quote: quoteText });
   } catch (error) {
