@@ -1,11 +1,9 @@
 import express from "express";
 import fetch from "node-fetch";
 import cors from "cors";
-
 const app = express();
 app.use(cors());
-
-const GEMINI_KEY = process.env.GEMINI_KEY; // ← from environment variable
+const GEMINI_KEY = process.env.GEMINI_KEY;
 
 app.get("/quote", async (req, res) => {
   try {
@@ -19,10 +17,15 @@ app.get("/quote", async (req, res) => {
       body: JSON.stringify(body)
     });
     const data = await response.json();
-    // const quoteText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-    const quoteText = data?.candidates?.[0]?.content?.parts?.[0]?.text
-      ?.replace(/^["*_]+|["*_]+$/g, "")  // removes surrounding quotes, asterisks
-      .trim();
+
+    // ← Add this to see the full Gemini response in Railway logs
+    console.log("Gemini response:", JSON.stringify(data, null, 2));
+
+    const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+    console.log("Raw quote text:", rawText); // ← see exactly what Gemini returns
+
+    const quoteText = rawText?.replace(/^["*_]+|["*_]+$/g, "").trim();
+
     if (!quoteText) throw new Error("No quote found");
     res.json({ quote: quoteText });
   } catch (error) {
@@ -31,5 +34,5 @@ app.get("/quote", async (req, res) => {
   }
 });
 
-const PORT = process.env.PORT || 3000; // ← Railway injects this automatically
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
