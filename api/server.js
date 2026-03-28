@@ -19,7 +19,7 @@ app.get("/quote", async (req, res) => {
     const data = await response.json();
 
     // Temporary debug
-    // console.log("Gemini response:", JSON.stringify(data, null, 2));
+    console.log("Gemini response:", JSON.stringify(data, null, 2));
     
     const quoteText = data?.candidates?.[0]?.content?.parts?.[0]?.text
       ?.replace(/^["*_]+|["*_]+$/g, "")
