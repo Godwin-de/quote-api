@@ -18,7 +18,7 @@ app.get("/quote", async (req, res) => {
         messages: [
           {
             role: "user",
-            content: "Generate a short inspirational quote. Atleast 5 to 10 words maximum"
+            content: "Generate a short random inspirational quote. Atleast 5 to 10 words maximum"
           }
         ],
         max_tokens: 100
