@@ -42,6 +42,7 @@ app.get("/weather", async (req, res) => {
   try {
     let lat = parseFloat(req.query.lat);
     let lon = parseFloat(req.query.lon);
+    let city = req.query.city || null;
 
     // 1. Get coordinates from the caller's IP if not provided
     if (isNaN(lat) || isNaN(lon)) {
@@ -50,7 +51,7 @@ app.get("/weather", async (req, res) => {
         req.socket.remoteAddress;
 
       // ip-api.com is free, no key required (45 req/min limit)
-      const geoRes  = await fetch(`http://ip-api.com/json/${ip}?fields=lat,lon,city,status`);
+      const geoRes  = await fetch(`http://ip-api.com/json/${ip}?fields=lat,lon,city,regionName,country,status`);
       const geoData = await geoRes.json();
 
       if (geoData.status !== "success") {
@@ -58,6 +59,7 @@ app.get("/weather", async (req, res) => {
       }
       lat = geoData.lat;
       lon = geoData.lon;
+      city = `${geoData.city}, ${geoData.regionName}, ${geoData.country}`;
     }
 
     // 2. Fetch current temperature + relative humidity from Open-Meteo
@@ -79,11 +81,13 @@ app.get("/weather", async (req, res) => {
     const heatIndex = calcHeatIndex(tempC, humidity);
 
     res.json({
+      location:        city || `${lat}, ${lon}`,
+      coordinates:     { lat, lon },
       temperature_c:   tempC,
       humidity_pct:    humidity,
       heat_index_c:    heatIndex,
       heat_level:      heatLevel(heatIndex),   // e.g. "Caution", "Danger"
-      location:        { lat, lon }
+      //location:        { lat, lon }
     });
 
   } catch (error) {
